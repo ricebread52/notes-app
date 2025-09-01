@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Use your own logo as favicon -->
+    <link rel="icon" type="image/svg+xml" href="/src/assets/logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notes App</title>
+    
+    <!-- ADD TAILWIND CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- ADD CONFIG AS JAVASCRIPT, NOT CSS -->
+    <script>
+      // JavaScript configuration for Tailwind
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#2563eb",
+            },
+            borderRadius: {
+              xl: "12px",
+            }
+          }
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

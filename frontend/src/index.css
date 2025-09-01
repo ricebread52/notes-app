@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* App defaults */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Base typography */
+body {
+  @apply bg-white text-gray-900 font-sans;
+}
+
+a {
+  @apply text-blue-600 font-medium hover:underline;
+}
+
+button {
+  @apply cursor-pointer transition;
+}
