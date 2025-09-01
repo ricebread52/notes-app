@@ -25,6 +25,7 @@ export default function Signup() {
 
     setLoading(true);
     try {
+      // ✅ FIX: sendOtp now takes an object
       const result = await sendOtp({ email: formData.email });
       if (result.success) {
         setOtpSent(true);
@@ -50,7 +51,7 @@ export default function Signup() {
         otp,
       });
 
-      if (result?.message?.toLowerCase().includes("success")) {
+      if (result?.success || result?.message?.toLowerCase().includes("success")) {
         alert("Signup successful! Redirecting to login...");
         navigate("/login");
       } else {
