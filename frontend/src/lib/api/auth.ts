@@ -1,5 +1,8 @@
 const API_URL = "https://notes-app-gzsq.onrender.com/api/auth";
 
+interface SendOtpData {
+  email: string;
+}
 
 interface VerifyOtpData {
   email: string;
@@ -8,7 +11,8 @@ interface VerifyOtpData {
   dob?: string;  // Optional for signup
 }
 
-export async function sendOtp(email: string) {
+// ✅ sendOtp now accepts an object with email
+export async function sendOtp({ email }: SendOtpData) {
   const response = await fetch(`${API_URL}/send-otp`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -21,7 +25,7 @@ export async function verifyOtp({ email, otp, name, dob }: VerifyOtpData) {
   const response = await fetch(`${API_URL}/verify-otp`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, otp, name, dob }), // send all possible fields
+    body: JSON.stringify({ email, otp, name, dob }),
   });
   return response.json();
 }
@@ -35,12 +39,9 @@ export async function verifyOtpLogin({ email, otp }: VerifyOtpData) {
   return response.json();
 }
 
-// 🔹 Fetch logged-in user's profile (name, email, dob)
 export async function getProfile(token: string) {
   const response = await fetch(`${API_URL}/profile`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
   });
 
   if (!response.ok) {
