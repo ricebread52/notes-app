@@ -11,7 +11,7 @@ interface VerifyOtpData {
   dob?: string;  // Optional for signup
 }
 
-// ✅ sendOtp now accepts an object with email
+// ✅ FIX: sendOtp now accepts { email }
 export async function sendOtp({ email }: SendOtpData) {
   const response = await fetch(`${API_URL}/send-otp`, {
     method: "POST",
