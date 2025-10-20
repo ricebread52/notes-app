@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:5000/api"; // Adjust for production later
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api"; // Adjust for production later
 
 // Signup
 export const signup = async (data: { name: string; dob: string; email: string; password?: string }) => {
