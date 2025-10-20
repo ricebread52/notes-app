@@ -1,4 +1,4 @@
-const API_URL = "https://notes-app-production-c9db.up.railway.app/api/auth";
+const API_URL = "https://notes-app-gzsq.onrender.com/api/auth";
 
 interface SendOtpData {
   email: string;
