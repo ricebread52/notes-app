@@ -1,53 +1,56 @@
-import nodemailer from "nodemailer";
+import { Resend } from 'resend';
 
 const otpStore = new Map();
+const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Generate 6-digit OTP
 export function generateOtp(email) {
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  otpStore.set(email, { otp, expires: Date.now() + 5 * 60 * 1000 });
-  console.log(`✅ OTP for ${email}: ${otp}`);
+  otpStore.set(email, { otp, expires: Date.now() + 5 * 60 * 1000 }); // valid 5 minutes
+  console.log(`✅ OTP for ${email}: ${otp}`); // log for debugging
   return otp;
 }
 
+// Verify OTP
 export function verifyStoredOtp(email, otp) {
   const record = otpStore.get(email);
   if (!record) return false;
   if (record.otp !== otp) return false;
   if (Date.now() > record.expires) return false;
-  otpStore.delete(email);
+  otpStore.delete(email); // one-time use
   return true;
 }
 
+// Send OTP via Resend
 export async function sendOtpEmail(email, otp) {
   try {
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465, // Try port 465 with SSL
-      secure: true, // Use SSL
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-      connectionTimeout: 15000, // Increased timeout
-    });
-
-    console.log("🔄 Attempting to send email...");
-    
-    const info = await transporter.sendMail({
-      from: `"Notes App" <${process.env.EMAIL_USER}>`,
+    const { data, error } = await resend.emails.send({
+      from: 'Notes App <onboarding@resend.dev>',
       to: email,
-      subject: "Your OTP Code",
-      text: `Your OTP is ${otp}. It will expire in 5 minutes.`,
-      html: `<p>Your OTP is <strong>${otp}</strong>. It will expire in 5 minutes.</p>`
+      subject: 'Your OTP Code',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto;">
+          <h2 style="color: #2563eb;">Your OTP Code</h2>
+          <p>Your One-Time Password for Notes App is:</p>
+          <div style="font-size: 32px; font-weight: bold; color: #2563eb; text-align: center; margin: 20px 0;">
+            ${otp}
+          </div>
+          <p>This code will expire in <strong>5 minutes</strong>.</p>
+          <p style="color: #6b7280; font-size: 14px;">If you didn't request this code, please ignore this email.</p>
+        </div>
+      `,
+      text: `Your OTP is ${otp}. It will expire in 5 minutes.`
     });
 
-    console.log("✅ OTP email sent successfully:", info.messageId);
-    return info;
+    if (error) {
+      console.error('❌ Resend error:', error);
+      throw error;
+    }
+
+    console.log('✅ OTP email sent via Resend:', data?.id);
+    return data;
   } catch (err) {
-    console.error("❌ Gmail failed:", err.message);
-    
-    // FALLBACK: Log OTP and don't throw error
-    console.log(`📧 OTP for ${email}: ${otp} - Email failed, but OTP is valid`);
-    return { message: "OTP logged due to email failure" };
+    console.error('❌ Error sending OTP email:', err.message);
+    throw err;
   }
 }
