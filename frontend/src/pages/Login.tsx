@@ -25,8 +25,8 @@ export default function Login() {
       } else {
         setErrors({ general: result.message || "Failed to send OTP" });
       }
-    } catch (err: any) {
-      setErrors({ general: err.message || "Something went wrong" });
+    } catch (err: unknown) {
+      setErrors({ general: err instanceof Error ? err.message : "Something went wrong" });
     } finally {
       setLoading(false);
     }
@@ -45,8 +45,8 @@ export default function Login() {
       } else {
         setErrors({ general: result.message || "OTP verification failed" });
       }
-    } catch (err: any) {
-      setErrors({ general: err.message || "Something went wrong" });
+    } catch (err: unknown) {
+      setErrors({ general: err instanceof Error ? err.message : "Something went wrong" });
     } finally {
       setLoading(false);
     }
