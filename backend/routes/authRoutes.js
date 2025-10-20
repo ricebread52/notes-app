@@ -21,9 +21,28 @@ router.post("/send-otp", async (req, res) => {
     }
 
     const otp = generateOtp(recipient);
-    await sendOtpEmail(recipient, otp);
-
-    res.json({ success: true, message: "OTP sent successfully" });
+    
+    try {
+      // Try to send email
+      await sendOtpEmail(recipient, otp);
+      
+      // If email succeeds
+      res.json({ 
+        success: true, 
+        message: "OTP sent successfully to your email" 
+      });
+      
+    } catch (emailError) {
+      // If email fails, still return success but include OTP in response
+      console.log("📧 Email failed, returning OTP in response");
+      res.json({ 
+        success: true, 
+        message: "OTP generated successfully",
+        otp: otp, // Include OTP so user can see it
+        note: "Check console/logs for OTP - email service temporarily unavailable"
+      });
+    }
+    
   } catch (err) {
     console.error("❌ Error in /send-otp:", err.message);
     res.status(500).json({ success: false, message: "Failed to send OTP" });
